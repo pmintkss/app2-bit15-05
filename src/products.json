@@ -1,0 +1,12 @@
+[
+    {
+        "id":1,
+        "name":"Coffee",
+        "image":"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTYPzW-mf0H9oDRZm_FX7NWNWvzVnurkIqi1wzhKhhckg&s=10"
+    },
+    {
+        "id":2,
+        "name":"Tea",
+        "image":"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQC1sG_cHjirsA6TbOfwC6JjThrHfvX62vDpr-8j9L5FQ&s=10"
+    }
+]
