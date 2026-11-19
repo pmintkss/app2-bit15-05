@@ -1,12 +1,62 @@
 [
     {
         "id":1,
-        "name":"Coffee",
-        "image":"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTYPzW-mf0H9oDRZm_FX7NWNWvzVnurkIqi1wzhKhhckg&s=10"
+        "name": "Coffee",
+        "price":45,
+        "image": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/45/A_small_cup_of_coffee.JPG/1280px-A_small_cup_of_coffee.JPG?utm_source=th.wikipedia.org&utm_campaign=index&utm_content=thumbnail"
     },
     {
         "id":2,
         "name":"Tea",
-        "image":"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQC1sG_cHjirsA6TbOfwC6JjThrHfvX62vDpr-8j9L5FQ&s=10"
+        "price":50,
+        "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS-vZ45XZOUz1cSM4RJql-qOlrDHm2IDPO7MvlzHUKADQ&s=10"
+    },
+    {
+        "id":3,
+        "name": "milk",
+        "price":45,
+        "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSbogsMNu0-iIBRRJByJ0x61RZxsjNeZUvgh3L-knWk4w&s=10"
+    },
+    {
+        "id":4,
+        "name":"water",
+        "price":10,
+        "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSQhUNs236g_EkYDT_IVqOSd3KVVIPLQN1tBMGI4kpNdQ&s=10"
+    },
+    {
+        "id":5,
+        "name": "lemon soda",
+        "price":35,
+        "image": "https://bakesbybrownsugar.com/wp-content/uploads/2023/01/Lemon-Soda-33C.jpg"
+    },
+    {
+        "id":6,
+        "name":"red soda",
+        "price":50,
+        "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTpDw1dmycNX4bLYT0SpT9laPy5gNpyfj99LF3fVSOheVfwY91tgBXeJoAr&s=10"
+    },
+    {
+        "id":7,
+        "name": "blue soda",
+        "price":45,
+        "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ-1AVR3o4qvEk31TGZqnAAzp6Ei8sZdIhmFEssxx6bWA&s=10"
+    },
+    {
+        "id":8,
+        "name":"ssd",
+        "price":50,
+        "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQC1sG_cHjirsA6TbOfwC6JjThrHfvX62vDpr-8j9L5FQ&s=10"
+    },
+    {
+        "id":9,
+        "name": "cpu",
+        "price":45,
+        "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTYPzW-mf0H9oDRZm_FX7NWNWvzVnurkIqi1wzhKhhckg&s=10"
+    },
+    {
+        "id":10,
+        "name":"ssd",
+        "price":50,
+        "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQC1sG_cHjirsA6TbOfwC6JjThrHfvX62vDpr-8j9L5FQ&s=10"
     }
 ]
