@@ -5,29 +5,22 @@
  * ============================================================================
  * 
  * รายละเอียดการทำงาน:
- * - รับข้อมูลสินค้าผ่าน Props ได้แก่ id, name, price, และ image
+ * - รับข้อมูลสินค้าผ่าน Props ได้แก่ id, name, price, category, stock, และ image
  * - จัดวางเลย์เอาต์แบบแนวนอน (Row layout) ประกอบด้วย:
  *   1. รูปภาพสินค้า (ด้านซ้าย)
- *   2. ชื่อสินค้า (ตรงกลาง ยืดหยุ่นตามพื้นที่ที่เหลือ)
+ *   2. ข้อมูลสินค้า: ชื่อสินค้า + แท็กบอกหมวดหมู่ + จำนวนคงเหลือในสต็อก (ตรงกลาง)
  *   3. ป้ายราคา (ด้านขวา แสดงเฉพาะเมื่อมีการส่งราคาเข้ามา)
  */
 
 // นำเข้า UI Components พื้นฐานและ StyleSheet จาก React Native
 import { Image, StyleSheet, Text, View } from 'react-native'
 
-/**
- * Type Definition: CardProps
- * กำหนดประเภทของข้อมูล (TypeScript Type) ที่คอมโพเนนต์ Card จำเป็นต้องใช้
- * 
- * @property {number} id - รหัสประจำตัวสินค้า (ใช้ระบุตัวตนของสินค้า)
- * @property {string} name - ชื่อของสินค้าที่จะแสดงผล
- * @property {number} [price] - ราคาสินค้า (ใส่เครื่องหมาย ? หมายถึงเป็น optional จะส่งมาหรือไม่ส่งก็ได้)
- * @property {string} image - URL ลิงก์รูปภาพของสินค้า (ใช้ดึงภาพจาก Network)
- */
 type CardProps = {
     id: number,
     name: string,
-    price?: number,
+    price: number,
+    category: string,
+    stock?: number,
     image: string
 }
 
@@ -38,7 +31,7 @@ type CardProps = {
  * @param {CardProps} props - ข้อมูลสินค้าที่ถูกส่งมาจากคอมโพเนนต์แม่ (Parent Component)
  * @returns {JSX.Element} - หน้าตา UI ของการ์ดสินค้า
  */
-export default function Card({ id, name, price, image }: CardProps) {
+export default function Card({ id, name, price, category, stock, image }: CardProps) {
     return (
         /* กล่องหลักของการ์ด (Container Box) */
         <View style={cardStyle.box}>
@@ -51,11 +44,40 @@ export default function Card({ id, name, price, image }: CardProps) {
             <Image source={{ uri: image }} style={cardStyle.image} />
             
             {/* 
-              ส่วนแสดงชื่อสินค้า:
-              - style={cardStyle.text}: กำหนดขนาดตัวอักษร สีขาว ตัวหนา 
-                และตั้ง flex: 1 เพื่อให้ข้อความขยายเต็มพื้นที่ตรงกลางอัตโนมัติ
+              ส่วนแสดงรายละเอียดสินค้า (ชื่อ + หมวดหมู่ + สต็อก):
+              - ตั้ง flex: 1 เพื่อให้พื้นที่ตรงกลางยืดขยายตามขนาดหน้าจอ
             */}
-            <Text style={cardStyle.text}>{name}</Text>
+            <View style={cardStyle.infoBox}>
+                <Text style={cardStyle.text}>{name}</Text>
+                
+                {/* แถวแสดงป้ายหมวดหมู่และสต็อกสินค้า */}
+                <View style={cardStyle.tagsRow}>
+                    {/* แสดงแท็กหมวดหมู่สินค้า เมื่อมีการส่ง category เข้ามา */}
+                    {category && (
+                        <View style={cardStyle.categoryBadge}>
+                            <Text style={cardStyle.categoryText}>🏷️ {category}</Text>
+                        </View>
+                    )}
+
+                    {/* 
+                      ส่วนแสดงจำนวนสต็อกสินค้า (Conditional Rendering):
+                      - แสดงจำนวนคงเหลือ หรือแจ้งเตือนสินค้าหมดเมื่อ stock เป็น 0
+                    */}
+                    {stock !== undefined && (
+                        <View style={[
+                            cardStyle.stockBadge, 
+                            stock === 0 && cardStyle.stockBadgeEmpty
+                        ]}>
+                            <Text style={[
+                                cardStyle.stockText,
+                                stock === 0 && cardStyle.stockTextEmpty
+                            ]}>
+                                {stock > 0 ? `📦 คงเหลือ ${stock} ชิ้น` : '❌ สินค้าหมด'}
+                            </Text>
+                        </View>
+                    )}
+                </View>
+            </View>
             
             {/* 
               ส่วนแสดงราคาแบบมีเงื่อนไข (Conditional Rendering):
@@ -82,11 +104,12 @@ const cardStyle = StyleSheet.create({
      * สไตล์กล่องการ์ดภายนอกสุด
      */
     box: {
-        flexDirection: "row",       // จัดเรียงไอเทมภายในแนวนอน (จากซ้ายไปขวา: รูป -> ชื่อ -> ราคา)
+        flexDirection: "row",       // จัดเรียงไอเทมภายในแนวนอน (จากซ้ายไปขวา: รูป -> ข้อมูลสินค้า -> ราคา)
         alignItems: "center",       // จัดให้อยู่กึ่งกลางในแนวตั้ง (แกนรอง / Cross Axis)
         backgroundColor: "#0a1d67", // สีพื้นหลังของการ์ด (โทนสีน้ำเงินเข้ม)
-        gap: 12,                    // ระยะห่างระหว่างไอเทมแต่ละชิ้นในกล่อง (รูป, ชื่อ, ป้ายราคา)
-        margin: 10,                 // ระยะห่างภายนอกการ์ด เพื่อไม่ให้การ์ดติดขอบจอหรือติดกับการ์ดใบอื่น
+        gap: 12,                    // ระยะห่างระหว่างไอเทมแต่ละชิ้นในกล่อง (รูป, ข้อมูล, ป้ายราคา)
+        marginHorizontal: 14,       // ระยะห่างแนวนอนซ้ายขวาจากการ์ดถึงขอบจอ
+        marginVertical: 6,          // ระยะห่างแนวตั้งระหว่างการ์ดแต่ละใบ
         borderRadius: 16,           // ทำขอบการ์ดให้มีความโค้งมน ดูนุ่มนวลและทันสมัย
         padding: 10                 // ระยะห่างภายในขอบการ์ด ช่วยไม่ให้เนื้อหาชิดขอบการ์ดมากเกินไป
     },
@@ -95,20 +118,94 @@ const cardStyle = StyleSheet.create({
      * สไตล์ของรูปภาพสินค้า
      */
     image: {
-        width: 100,                 // กำหนดความกว้างของรูปภาพคงที่ 100 หน่วย (points)
-        height: 100,                // กำหนดความสูงของรูปภาพคงที่ 100 หน่วย (สัดส่วน 1:1 จัตุรัส)
-        borderRadius: 10,           // ปรับมุมรูปภาพให้โค้งมน รับกับดีไซน์ของการ์ด
+        width: 80,                  // กำหนดความกว้างของรูปภาพคงที่ 80 หน่วย (points)
+        height: 80,                 // กำหนดความสูงของรูปภาพคงที่ 80 หน่วย (สัดส่วน 1:1 จัตุรัส)
+        borderRadius: 12,           // ปรับมุมรูปภาพให้โค้งมน รับกับดีไซน์ของการ์ด
+    },
+
+    /**
+     * กล่องจัดข้อมูลชื่อสินค้าและหมวดหมู่
+     */
+    infoBox: {
+        flex: 1,                    // ขยายพื้นที่ให้กว้างที่สุดเท่าที่จะทำได้ระหว่างรูปกับป้ายราคา
+        justifyContent: "center",   // จัดวางเนื้อหาให้อยู่กึ่งกลางแนวตั้ง
+        gap: 6                      // ระยะห่างระหว่างชื่อสินค้าและแท็กแถวล่าง
     },
 
     /**
      * สไตล์ของข้อความชื่อสินค้า
      */
     text: {
-        flex: 1,                    // ขยายพื้นที่ให้กว้างที่สุดเท่าที่จะทำได้ระหว่างรูปกับป้ายราคา
         fontSize: 18,               // ขนาดตัวอักษร 18 หน่วย
-        marginLeft: 5,              // ระยะห่างจากรูปภาพด้านซ้ายเล็กน้อย
         fontWeight: 'bold',         // ปรับตัวอักษรให้หนาเพื่อความโดดเด่นและอ่านง่าย
         color: '#ffffff',           // ตัวหนังสือสีขาว เพื่อตัดกับพื้นหลังสีน้ำเงินเข้ม
+    },
+
+    /**
+     * แถวจัดวางป้ายแท็กหมวดหมู่และป้ายสต็อก
+     */
+    tagsRow: {
+        flexDirection: "row",       // จัดเรียงแท็กแนวนอน
+        alignItems: "center",       // กึ่งกลางแนวตั้ง
+        flexWrap: "wrap",           // ตัดขึ้นบรรทัดใหม่ได้ถ้าหน้าจอแคบ
+        gap: 6,                     // ระยะห่างระหว่างแท็ก
+    },
+
+    /**
+     * สไตล์ป้ายแท็กหมวดหมู่ (Category Badge)
+     */
+    categoryBadge: {
+        alignSelf: "flex-start",    // ปรับขนาดความกว้างของป้ายให้พอดีกับข้อความข้างใน
+        backgroundColor: "rgba(255, 255, 255, 0.15)", // พื้นหลังโปร่งแสงสีขาว
+        paddingHorizontal: 8,       // ระยะห่างแนวนอนซ้ายขวาในป้าย
+        paddingVertical: 2,         // ระยะห่างแนวตั้งบนล่างในป้าย
+        borderRadius: 6,            // ทำขอบป้ายมน
+    },
+
+    /**
+     * สไตล์ตัวหนังสือหมวดหมู่
+     */
+    categoryText: {
+        fontSize: 12,               // ตัวหนังสือขนาดกะทัดรัด
+        color: '#d0d8ff',           // สีฟ้าสว่างอมขาว เพื่อให้อ่านง่าย
+        fontWeight: '500',          // ความหนาปานกลาง
+    },
+
+    /**
+     * สไตล์ป้ายสต็อกสินค้าคงเหลือ (Stock Badge)
+     */
+    stockBadge: {
+        alignSelf: "flex-start",    // ขยายตามขนาดข้อความ
+        backgroundColor: "rgba(76, 175, 80, 0.2)", // สีเขียวโปร่งแสงแสดงว่ามีของ
+        borderColor: "rgba(76, 175, 80, 0.4)",      // ขอบสีเขียวอ่อน
+        borderWidth: 1,             // ความหนาเส้นขอบ
+        paddingHorizontal: 8,       // ระยะห่างแนวนอนซ้ายขวา
+        paddingVertical: 2,         // ระยะห่างแนวตั้งบนล่าง
+        borderRadius: 6,            // ทำขอบป้ายมน
+    },
+
+    /**
+     * สไตล์ป้ายกรณีสินค้าหมดสต็อก (Out of Stock)
+     */
+    stockBadgeEmpty: {
+        backgroundColor: "rgba(244, 67, 54, 0.2)", // สีแดงโปร่งแสงกรณีของหมด
+        borderColor: "rgba(244, 67, 54, 0.4)",
+    },
+
+    /**
+     * สไตล์ตัวหนังสือสต็อกสินค้า
+     */
+    stockText: {
+        fontSize: 12,               // ขนาดตัวอักษร 12 หน่วย
+        color: '#a5d6a7',           // ตัวหนังสือสีเขียวอ่อนสดใส อ่านง่าย
+        fontWeight: '500',
+    },
+
+    /**
+     * สไตล์ตัวหนังสือสต็อกกรณีของหมด
+     */
+    stockTextEmpty: {
+        color: '#ef9a9a',           // ตัวหนังสือสีแดงอ่อน
     },
 
     /**
