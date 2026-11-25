@@ -1,5 +1,29 @@
+/**
+ * ============================================================================
+ * ไฟล์: src/components/card.tsx
+ * หน้าที่: คอมโพเนนต์ (Component) สำหรับแสดงผลการ์ดข้อมูลสินค้า 1 ชิ้น
+ * ============================================================================
+ * 
+ * รายละเอียดการทำงาน:
+ * - รับข้อมูลสินค้าผ่าน Props ได้แก่ id, name, price, และ image
+ * - จัดวางเลย์เอาต์แบบแนวนอน (Row layout) ประกอบด้วย:
+ *   1. รูปภาพสินค้า (ด้านซ้าย)
+ *   2. ชื่อสินค้า (ตรงกลาง ยืดหยุ่นตามพื้นที่ที่เหลือ)
+ *   3. ป้ายราคา (ด้านขวา แสดงเฉพาะเมื่อมีการส่งราคาเข้ามา)
+ */
+
+// นำเข้า UI Components พื้นฐานและ StyleSheet จาก React Native
 import { Image, StyleSheet, Text, View } from 'react-native'
 
+/**
+ * Type Definition: CardProps
+ * กำหนดประเภทของข้อมูล (TypeScript Type) ที่คอมโพเนนต์ Card จำเป็นต้องใช้
+ * 
+ * @property {number} id - รหัสประจำตัวสินค้า (ใช้ระบุตัวตนของสินค้า)
+ * @property {string} name - ชื่อของสินค้าที่จะแสดงผล
+ * @property {number} [price] - ราคาสินค้า (ใส่เครื่องหมาย ? หมายถึงเป็น optional จะส่งมาหรือไม่ส่งก็ได้)
+ * @property {string} image - URL ลิงก์รูปภาพของสินค้า (ใช้ดึงภาพจาก Network)
+ */
 type CardProps = {
     id: number,
     name: string,
@@ -7,13 +31,41 @@ type CardProps = {
     image: string
 }
 
+/**
+ * คอมโพเนนต์ Card
+ * ทำหน้าที่เรนเดอร์โครงสร้าง UI ของการ์ดสินค้าตามข้อมูลที่ได้รับจาก Props
+ * 
+ * @param {CardProps} props - ข้อมูลสินค้าที่ถูกส่งมาจากคอมโพเนนต์แม่ (Parent Component)
+ * @returns {JSX.Element} - หน้าตา UI ของการ์ดสินค้า
+ */
 export default function Card({ id, name, price, image }: CardProps) {
     return (
+        /* กล่องหลักของการ์ด (Container Box) */
         <View style={cardStyle.box}>
+            
+            {/* 
+              ส่วนแสดงรูปภาพสินค้า:
+              - source={{ uri: image }}: กำหนดที่มารูปภาพจาก URL (Network Image)
+              - style={cardStyle.image}: กำหนดขนาด ความกว้าง ความสูง และมุมโค้งของรูปภาพ
+            */}
             <Image source={{ uri: image }} style={cardStyle.image} />
+            
+            {/* 
+              ส่วนแสดงชื่อสินค้า:
+              - style={cardStyle.text}: กำหนดขนาดตัวอักษร สีขาว ตัวหนา 
+                และตั้ง flex: 1 เพื่อให้ข้อความขยายเต็มพื้นที่ตรงกลางอัตโนมัติ
+            */}
             <Text style={cardStyle.text}>{name}</Text>
+            
+            {/* 
+              ส่วนแสดงราคาแบบมีเงื่อนไข (Conditional Rendering):
+              - เช็คว่า price ไม่ใช่ undefined (มีการส่งราคาเข้ามาจริง)
+              - หากมีราคา จะทำการเรนเดอร์กล่องป้ายราคา (priceBox) ขึ้นมา
+              - หากไม่มีราคา ส่วนนี้จะไม่ถูกเรนเดอร์ลงใน UI
+            */}
             {price !== undefined && (
                 <View style={cardStyle.priceBox}>
+                    {/* ข้อความราคาสินค้า พร้อมต่อท้ายด้วยหน่วย 'บาท' */}
                     <Text style={cardStyle.priceText}>{price} บาท</Text>
                 </View>
             )}
@@ -21,38 +73,62 @@ export default function Card({ id, name, price, image }: CardProps) {
     )
 }
 
+/**
+ * StyleSheet: cardStyle
+ * รวมการกำหนดสไตล์ (CSS-in-JS) สำหรับตกแต่งคอมโพเนนต์ Card
+ */
 const cardStyle = StyleSheet.create({
+    /**
+     * สไตล์กล่องการ์ดภายนอกสุด
+     */
     box: {
-        flexDirection: "row",
-        alignItems: "center",
-        backgroundColor: "#2a8330",
-        gap: 12,
-        margin: 10,
-        borderRadius: 16,
-        padding: 10
+        flexDirection: "row",       // จัดเรียงไอเทมภายในแนวนอน (จากซ้ายไปขวา: รูป -> ชื่อ -> ราคา)
+        alignItems: "center",       // จัดให้อยู่กึ่งกลางในแนวตั้ง (แกนรอง / Cross Axis)
+        backgroundColor: "#0a1d67", // สีพื้นหลังของการ์ด (โทนสีน้ำเงินเข้ม)
+        gap: 12,                    // ระยะห่างระหว่างไอเทมแต่ละชิ้นในกล่อง (รูป, ชื่อ, ป้ายราคา)
+        margin: 10,                 // ระยะห่างภายนอกการ์ด เพื่อไม่ให้การ์ดติดขอบจอหรือติดกับการ์ดใบอื่น
+        borderRadius: 16,           // ทำขอบการ์ดให้มีความโค้งมน ดูนุ่มนวลและทันสมัย
+        padding: 10                 // ระยะห่างภายในขอบการ์ด ช่วยไม่ให้เนื้อหาชิดขอบการ์ดมากเกินไป
     },
+
+    /**
+     * สไตล์ของรูปภาพสินค้า
+     */
     image: {
-        width: 100,
-        height: 100,
-        borderRadius: 10,
+        width: 100,                 // กำหนดความกว้างของรูปภาพคงที่ 100 หน่วย (points)
+        height: 100,                // กำหนดความสูงของรูปภาพคงที่ 100 หน่วย (สัดส่วน 1:1 จัตุรัส)
+        borderRadius: 10,           // ปรับมุมรูปภาพให้โค้งมน รับกับดีไซน์ของการ์ด
     },
+
+    /**
+     * สไตล์ของข้อความชื่อสินค้า
+     */
     text: {
-        flex: 1,
-        fontSize: 18,
-        fontWeight: 'bold',
-        color: '#FFFDD0',
+        flex: 1,                    // ขยายพื้นที่ให้กว้างที่สุดเท่าที่จะทำได้ระหว่างรูปกับป้ายราคา
+        fontSize: 18,               // ขนาดตัวอักษร 18 หน่วย
+        marginLeft: 5,              // ระยะห่างจากรูปภาพด้านซ้ายเล็กน้อย
+        fontWeight: 'bold',         // ปรับตัวอักษรให้หนาเพื่อความโดดเด่นและอ่านง่าย
+        color: '#ffffff',           // ตัวหนังสือสีขาว เพื่อตัดกับพื้นหลังสีน้ำเงินเข้ม
     },
+
+    /**
+     * สไตล์กล่องป้ายแสดงราคา (Badge / Pill Box)
+     */
     priceBox: {
-        backgroundColor: "#ffffff",
-        paddingVertical: 6,
-        paddingHorizontal: 12,
-        borderRadius: 12,
-        alignItems: "center",
-        justifyContent: "center",
+        backgroundColor: "#4130ac", // สีพื้นหลังป้ายราคา (โทนสีน้ำเงินม่วง เพื่อให้ตัดกับการ์ด)
+        paddingVertical: 6,         // ระยะห่างด้านบนและล่างภายในป้ายราคา 6 หน่วย
+        paddingHorizontal: 12,      // ระยะห่างด้านซ้ายและขวาภายในป้ายราคา 12 หน่วย
+        borderRadius: 12,           // ทำให้ขอบป้ายราคาโค้งมนคล้ายเม็ดยา (Pill shape)
+        alignItems: "center",       // จัดข้อความให้อยู่กึ่งกลางแนวนอน
+        justifyContent: "center",    // จัดข้อความให้อยู่กึ่งกลางแนวตั้ง
     },
+
+    /**
+     * สไตล์ตัวอักษรของราคา
+     */
     priceText: {
-        fontSize: 15,
-        fontWeight: 'bold',
-        color: '#287c47',
+        fontSize: 15,               // ขนาดตัวอักษร 15 หน่วย
+        fontWeight: 'bold',         // ปรับตัวหนาเพื่อให้อ่านตัวเลขได้ชัดเจน
+        color: '#ffffff',           // ตัวหนังสือสีขาว
     }
 })
